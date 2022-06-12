@@ -1,90 +1,60 @@
-//茶壶旋转
-#include<GL/glu.h>
-#include<GL/glut.h>
-#include<stdio.h>
-#include<GL/glext.h>
-using namespace std;
+//三维观察、透视投影
+#include <Windows.h> //Windows的头文件
+#include <gl/glut.h> //包含OpenGL实用库
+
+GLint winWidth = 600,winHeight = 600;
+GLfloat x0 = 100.0,y0 = 50.0,z0 = 50.0;
+GLfloat xref = 50.0,yref = 50.0,zref = 0.0;
+GLfloat Vx = 0.0,Vy = 1.0,Vz = 0.0;
+
+GLfloat xwmin = -40.0,ywmin = -60.0,xwmax = 40.0,ywmax = 60.0;
+
+GLfloat dnear = 25.0,dfar = 125.0;
 
 void init(void)
 {
-	glClearColor(0.0, 0.0, 0.0, 0.0); //背景黑色
+    glClearColor(1.0,1.0,1.0,0.0);
+    glMatrixMode(GL_MODELVIEW);
+    gluLookAt(x0,y0,z0,xref,yref,zref,Vx,Vy,Vz);
+    glMatrixMode(GL_PROJECTION);
+    glFrustum(xwmin,xwmax,ywmin,ywmax,dnear,dfar);
+
 }
 
-void display(void)
+void displayFcn(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(1.0, 1.0, 1.0); //画笔白色
-
-	glLoadIdentity();  //加载单位矩阵
-
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	glutSolidOctahedron();
-	glutSwapBuffers();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0,1.0,0.0);
+    glPolygonMode(GL_FRONT,GL_FILL);
+    glPolygonMode(GL_BACK,GL_LINE);
+    glBegin(GL_QUADS);
+        glVertex3f(0.0,0.0,0.0);
+        glVertex3f(100.0,0.0,0.0);
+        glVertex3f(100.0,100.0,0.0);
+        glVertex3f(0.0,100.0,0.0);
+    glEnd();
+    glFlush();
 }
 
-void reshape(int w, int h)
+void reshapeFcn(GLint newWidth,GLint newHeight)
 {
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(60.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    glViewport(0,0,newWidth,newHeight);
+    winWidth = newWidth;
+    winHeight = newHeight;
 }
 
-void myKeyboard(unsigned char key, int x, int y)
+int main(int argc,char** argv)
 {
-	glMatrixMode(GL_MODELVIEW);
-	glMatrixMode(GL_PROJECTION);
-	switch (key)
-	{
-	case 'a': case 'A': glTranslated(0.1, 0, 0); break;     //向左平移0.1
-	case 'd': case 'D': glTranslated(-0.1, 0, 0); break;     //向右平移0.1
-	case 'w': case 'W': glTranslated(0, 0.1, 0); break;     //向上平移0.1
-	case 's': case 'S': glTranslated(0, -0.1, 0); break;     //向下平移0.1
-	case 'q': case 'Q': glTranslated(0, 0, 0.1); break;     //向外平移0.1
-	case 'e': case 'E': glTranslated(0, 0, -0.1); break;     //向里平移0.1
+    glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50, 50);
+	glutInitWindowSize(winWidth, winHeight);
+	glutCreateWindow("Perspective View of A Square");
 
-	case 'j': case 'J': glRotated(20, 0, 1, 0); break;      //绕y轴旋转10度
-	case 'l': case 'L': glRotated(20, 0, -1, 0); break;
-	case 'i': case 'I': glRotated(45, 1, 0, 0); break;      //绕x轴旋转10度
-	case 'k': case 'K': glRotated(45, -1, 0, 0); break;
-	case 'u': case 'U': glRotated(45, 0, 0, 1); break;      //绕z轴旋转10度
-	case 'o': case 'O': glRotated(45, 0, 0, -1); break;
-
-	case 'z': case 'Z': glScalef(1.5, 1.5, 1.5); break;         //放大
-	case 'x': case 'X': glScalef(0.5, 0.5, 0.5); break;         //缩小
-
-	default: break;
-	}
-
-	glutPostRedisplay();      //重新绘制
-}
-
-void myDisplay(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glutWireIcosahedron();
-	//glTranslated(0, 0, 0);
-	glFlush();
-	glutSwapBuffers();      //显示刚才绘制的图像，双缓冲
-}
-
-int main(int argc, char** argv)
-{
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(500, 500);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow(argv[0]);
 	init();
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-
-	glutKeyboardFunc(myKeyboard);
-	glutDisplayFunc(myDisplay);
+	glutDisplayFunc(displayFcn);
+	glutReshapeFunc(reshapeFcn);
 	glutMainLoop();
 	return 0;
+
 }

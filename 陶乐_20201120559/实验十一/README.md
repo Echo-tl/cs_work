@@ -1,89 +1,89 @@
-# 一、茶壶旋转
+# 一、三维观察
 
 ## 1、实验内容
 
-1. 使用OpenGL画茶壶并旋转；
-2. 使用opengl库函数对3D图像的坐标位置进行定位，使用相关函数进行旋转。设置输入输出语句，配合scanf人机交互，由用户对旋转轴和角度进行指定。填充图定位在固定点，旋转线框图来进行对照。
+1. 掌握OpenGL中的正交投影和透视投影;
+2. 使用OpenGL实现正方形的透视投影；
+3. 实现金字塔的三维观察代码演示。
 
 ## 2、实验原理
 
-1. 调用gult函数库实现茶壶的绘制
+1. 正方形在平面xy平面上定义，观察坐标系按原点按观察前平面选定，选择正方形的中心为注视点，使用glFrustum函数得到一个透视图。
 
-   ```c++
-   glutSolidTeapot(1.5);
-   ```
-
-
-
-2. 实现茶壶的缩放
-
-   ```c++
-   glScalef(1.0,1.0,1.0);//缩放比
-   glTranslatef(-1.0,-5.0,0.0);//下一个图形坐标
-   ```
+2. glFrustum（xwmin, xwamx, ywmin,ywamx，dnear, dfar)函数是openGL通用的透视投影函数，前四个参数设定平面上的裁剪窗口坐标，后两个参数指定坐标原点沿负z轴到近和远裁剪平面的距离。
 
    
 
-3. 茶壶的旋转使用glut函数库
+3. 设置窗口大小位置，调用透视投影函数，使用
 
    ```c++
-   glRotatef(thera,x,y,z);
-   glutWireTeapot(1.5);
+   void init(void)
+   {
+       glClearColor(1.0,1.0,1.0,0.0);
+       glMatrixMode(GL_MODELVIEW); 
+       gluLookAt(x0,y0,z0,xref,yref,zref,Vx,Vy,Vz);
+       glMatrixMode(GL_PROJECTION); //声明下一步要做的是透视投影
+       glFrustum(xwmin,xwmax,ywmin,ywmax,dnear,dfar);//调用透视投影函数
+   
+   }
    ```
 
 
 
+## 3、程序运行结果
 
+<img src="C:\Users\h\AppData\Roaming\Typora\typora-user-images\image-20220608100032370.png" alt="image-20220608100032370" style="zoom: 67%;" />
 
-# 二、鼠标、键盘交互操作
+# 一、三维观察
 
 ## 1、实验内容
 
-1. 熟悉OpenGL Glut中常用的回调函数；
-2. 一个旋转的三角形，用空闲回调函数实现；
+1. 掌握OpenGL中的正交投影和透视投影;
+2. 使用OpenGL实现正方形的透视投影；
+3. 实现金字塔的三维观察代码演示。
 
 ## 2、实验原理
 
-1. 用鼠标回调函数实现:
+1. 正方形在平面xy平面上定义，观察坐标系按原点按观察前平面选定，选择正方形的中心为注视点，使用glFrustum函数得到一个透视图。
 
-   创建鼠标回调函数：
-
-   ```c++
-   void myMouse(int button, int state, int x, int y)
-   {
-      //按下鼠标左键
-   	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-   		theta += 5.0;
-          FirstPoint=(x1,y1);
-          SecondPoint=(x2,y2);
-      //按下鼠标右键
-   	if(button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
-   		theta -= 5.0;
-     if (theta>360) theta -=360;
-     if (theta<0) theta +=360;
-     glutPostRedisplay(); //重新调用绘制函数
-   }
-   ```
+2. glFrustum（xwmin, xwamx, ywmin,ywamx，dnear, dfar)函数是openGL通用的透视投影函数，前四个参数设定平面上的裁剪窗口坐标，后两个参数指定坐标原点沿负z轴到近和远裁剪平面的距离。
 
    
 
-2. 用键盘回调函数实现
-
-   创建键盘回调函数：
+3. 设置窗口大小位置，调用透视投影函数，使用
 
    ```c++
-   void myKeyboard(unsigned char key,  int x, int y)
+   void init(void)
    {
-   	if(key == 'a' || key == 'A')
-   		theta += 5.0;
-   	if(key == 's' || key == 'S')
-   		theta -= 5.0;
-       if(key == 'c' || key == 'C')
-   		exit(0);
-   	if (theta>360) theta -=360;
-   	if (theta<0) theta +=360;
-   	glutPostRedisplay(); //重新调用绘制函数
+       glClearColor(1.0,1.0,1.0,0.0);
+       glMatrixMode(GL_MODELVIEW); 
+       gluLookAt(x0,y0,z0,xref,yref,zref,Vx,Vy,Vz);
+       glMatrixMode(GL_PROJECTION); //声明下一步要做的是透视投影
+       glFrustum(xwmin,xwmax,ywmin,ywmax,dnear,dfar);//调用透视投影函数
+   
    }
    ```
 
-   
+
+
+## 3、程序运行结果
+
+<img src="C:\Users\h\AppData\Roaming\Typora\typora-user-images\image-20220608100032370.png" alt="image-20220608100032370" style="zoom: 67%;" />
+
+
+
+# 二、金字塔的投影变化
+
+## 1、实验内容
+
+1. 变reshape函数中的投影函数及相关参数，体会OpenGL中投影变换的设置；
+
+## 2、实验原理
+
+1. reshape（）函数调用
+
+   ```c++
+   void reshape(int w, int h) //重绘回调函数，在窗口首次创建或用户改变窗口尺寸时被调用
+   ```
+
+2. 生成一个金字塔，通过键盘控制旋转的角度，当使用者按下对应按键时，对应金字塔的不同角度投影颜色。

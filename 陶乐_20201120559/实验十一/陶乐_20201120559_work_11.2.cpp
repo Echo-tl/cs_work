@@ -1,18 +1,70 @@
-//OpenGL下图形的交互控制----键盘、鼠标交互控制
+//金字塔的投影变化
 #include<windows.h>
+#include <stdlib.h>
 #include <GL/glut.h>
-#include <math.h>
-#define DEG_TO_RAD 0.017453  //角度转为弧度的参数，即 2*PI/360
 
-float theta=30.0; //直线与X轴正方向的夹角
-float length=200.0;  //直线的长度
-float x=300.0, y=200.0; //直线的第一个端点
+float theta=0.0;
 
-void init (void)
+void drawPyramid() //该金字塔在以原点为中心，边长为2的立方体范围内
 {
-    glClearColor (1.0, 1.0, 1.0, 0.0);
-    glMatrixMode (GL_PROJECTION);
-    gluOrtho2D (0.0, 640.0, 0.0, 480.0);
+	glBegin(GL_TRIANGLES);
+	  glColor3f(1.0f,0.0f,0.0f);	  //前面为红色
+	  glVertex3f( 0.0f, 1.0f, 0.0f);	//前面三角形上顶点
+	  glVertex3f(-1.0f,-1.0f, 1.0f);  //前面三角形左顶点
+	  glVertex3f( 1.0f,-1.0f, 1.0f);	//前面三角形右顶点
+
+	  glColor3f(0.0f,1.0f,0.0f);		//右面为绿色
+	  glVertex3f( 0.0f, 1.0f, 0.0f);	//右面三角形上顶点
+	  glVertex3f( 1.0f,-1.0f, 1.0f);	//右面三角形左顶点
+	  glVertex3f( 1.0f,-1.0f, -1.0f);	 //右面三角形右顶点
+
+	  glColor3f(0.0f,0.0f,1.0f);		//背面为蓝色
+	  glVertex3f( 0.0f, 1.0f, 0.0f);  //背面三角形上顶点
+	  glVertex3f( 1.0f,-1.0f, -1.0f);	 //背面三角形左顶点
+	  glVertex3f(-1.0f,-1.0f, -1.0f);	//背面三角形右顶点
+
+	  glColor3f(1.0f,1.0f,0.0f);		//左面为黄色
+	  glVertex3f( 0.0f, 1.0f, 0.0f);	//左面三角形上顶点
+	  glVertex3f(-1.0f,-1.0f,-1.0f);	//左面三角形左顶点
+	  glVertex3f(-1.0f,-1.0f, 1.0f);	//左面三角形右顶点
+	glEnd();
+	glBegin(GL_POLYGON);  //金字塔底面正方形
+      glColor3f(0.5f,0.5f,0.5f);  //底面为灰色
+	  glVertex3f(-1.0f,-1.0f, 1.0f);
+	  glVertex3f(1.0f,-1.0f, 1.0f);
+	  glVertex3f(1.0f,-1.0f, -1.0f);
+	  glVertex3f(-1.0f,-1.0f, -1.0f);
+	glEnd();
+}
+
+void display()
+{
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //清空颜色和深度缓存
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	//gluLookAt(2.0, 2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	glTranslatef(0.0f,0.0f,-5.0f);
+	glRotatef(theta,0.0f,1.0f,0.0f);
+	drawPyramid();
+
+	glutSwapBuffers();
+
+}
+
+void reshape(int w, int h) //重绘回调函数，在窗口首次创建或用户改变窗口尺寸时被调用
+{
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	//glFrustum(-1.0, 1.0, -1.0, 1.0, 3.1, 10.0);
+	//gluPerspective(45,1,0.1,10.0);
+	glOrtho(-2.0, 2.0, -2.0, 2.0, 2.0, 10.0);
+}
+
+void init()
+{
+	glClearColor (1.0, 1.0, 1.0, 1.0);
+	glEnable(GL_DEPTH_TEST);     //启动深度测试模式
 }
 
 void myKeyboard(unsigned char key,  int x, int y)
@@ -28,40 +80,16 @@ void myKeyboard(unsigned char key,  int x, int y)
 	glutPostRedisplay(); //重新调用绘制函数
 }
 
-void display (void)
+int main(int argc, char** argv)
 {
-    glClear (GL_COLOR_BUFFER_BIT);
-
-    glColor3f (1.0, 0.0, 0.0);
-    glBegin (GL_POLYGON);
-        glVertex2f (x, y);
-        glVertex2f ( x + length*cos(DEG_TO_RAD*theta),
- y + length*sin(DEG_TO_RAD*theta) );
-		glVertex2f ( x + length*cos(DEG_TO_RAD* (theta+30) ),
-y + length*sin(DEG_TO_RAD* (theta+30)) );
-    glEnd ( );
-    glutSwapBuffers ( );     //交换前后台缓存
-    glutKeyboardFunc( myKeyboard);
-}
-
-void idleFunc()
-{
-  theta += 0.1;
-  if (theta>360) theta -=360;
-  glutPostRedisplay(); //重新调用绘制函数
-}
-
-int main (int argc, char** argv)
-{
-    glutInit (&argc, argv);
-	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowPosition (100, 100);
-    glutInitWindowSize (640, 480);
-    glutCreateWindow ("Draw Triangle with Double Buffer");
-
-    init ( );
-    glutDisplayFunc (display);
-    glutKeyboardFunc( myKeyboard);
-	glutIdleFunc(idleFunc);             //指定空闲回调函数
-    glutMainLoop ( );
+	glutInit(&argc,argv);
+	glutInitDisplayMode (GLUT_DEPTH |GLUT_DOUBLE | GLUT_RGB);
+	glutInitWindowSize(500,500);
+	glutInitWindowPosition(0,0);
+	glutCreateWindow("金字塔---A键:顺时针旋转,S键:逆时针旋转,C键:退出");
+	glutReshapeFunc(reshape); //指定重绘回调函数
+	glutDisplayFunc(display);
+	glutKeyboardFunc( myKeyboard);   //指定键盘回调函数
+	init();
+	glutMainLoop();
 }
