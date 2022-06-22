@@ -394,6 +394,9 @@
    
 
 2. 运行结果：
+![teapot_final1](https://user-images.githubusercontent.com/86522948/174919219-58b169a5-b393-48dd-8fda-0b36e117a7ee.png)
+
+![teapot_final2](https://user-images.githubusercontent.com/86522948/174919237-7a9e9cff-140d-4a0b-b88d-144ab1a40e12.png)
 
 
 
@@ -403,7 +406,7 @@
 
 2. 在实验中，对光照以及纹理的处理中，只需要调用OpenGL的函数便可实现，但是在具体代码实现时，总是会报各种错误，比如添加纹理、打开文件等情况，并且需要引入 `glaux` 函数库，有时映射函数的问题，就导致运行窗口没有结果如下：
 
-   <img src="C:\Users\h\AppData\Roaming\Typora\typora-user-images\image-20220620205504181.png" alt="image-20220620205504181" style="zoom: 50%;" />
+![teapot_final3](https://user-images.githubusercontent.com/86522948/174919252-c32cc217-6913-42dd-be1d-dc97f9229b59.png)
 
    
 
