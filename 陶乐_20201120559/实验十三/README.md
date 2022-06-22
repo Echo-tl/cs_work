@@ -61,4 +61,4 @@
 
 1. 编译结果
 
-   <img src="C:\Users\h\AppData\Roaming\Typora\typora-user-images\image-20220608093853184.png" alt="image-20220608093853184" style="zoom:80%;" />
+![work14](https://user-images.githubusercontent.com/86522948/174920844-737b0edf-23eb-4197-b217-b05793698fed.png)

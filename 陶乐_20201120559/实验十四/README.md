@@ -48,4 +48,4 @@
 
 ## 3、编译结果
 
-<img src="C:\Users\h\AppData\Roaming\Typora\typora-user-images\image-20220615141839766.png" alt="image-20220615141839766" style="zoom:80%;" />
+![work13](https://user-images.githubusercontent.com/86522948/174921143-45043cea-eba7-4c27-869a-e538a0d7b08b.png)
